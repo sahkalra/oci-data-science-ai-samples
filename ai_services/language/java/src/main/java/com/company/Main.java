@@ -21,9 +21,23 @@ public class Main {
         try {
             ConfigFileAuthenticationDetailsProvider provider = new ConfigFileAuthenticationDetailsProvider("DEFAULT");
 //            AIServiceLanguageClient client = new AIServiceLanguageClient(provider);
-            client = AIServiceLanguageClient.builder().endpoint("https://language.aiservice-preprod.us-ashburn-1.oci.oraclecloud.com").build(provider);
+            client = AIServiceLanguageClient.builder().endpoint("https://language.aiservice.us-ashburn-1.oci.oraclecloud.com").build(provider);
 
             Main aiServiceLanguageExample = new Main();
+
+            BatchLanguageTranslationDetails batchLanguageTranslationDetails = BatchLanguageTranslationDetails.builder()
+                    .targetLanguageCode("en")
+                    .documents(new ArrayList<>(Arrays.asList(TextDocument.builder()
+                            .key("key1")
+                            .text("你")
+                            .languageCode("zh").build()))).build();
+
+            BatchLanguageTranslationRequest batchLanguageTranslationRequest = BatchLanguageTranslationRequest.builder()
+                    .batchLanguageTranslationDetails(batchLanguageTranslationDetails).build();
+
+            BatchLanguageTranslationResponse response1 = client.batchLanguageTranslation(batchLanguageTranslationRequest);
+            System.out.println(response1);
+            System.out.println("Translation: " + response1.getBatchLanguageTranslationResult().getDocuments().get(0).getTranslatedText());
 
 //            DetectDominantLanguageResult dominantLanguageResult = aiServiceLanguageExample.getDominantLanguage(text);
 //            aiServiceLanguageExample.printLanguageType(dominantLanguageResult);
@@ -37,8 +51,8 @@ public class Main {
 //            Project languageProject = aiServiceLanguageExample.createLanguageProject();
 //            System.out.println(languageProject.toString());
 //
-            BatchDetectLanguagePiiEntitiesResult result = aiServiceLanguageExample.getPersonalIdentificationInformation(text,"en");
-            System.out.println("response" + result);
+//            BatchDetectLanguagePiiEntitiesResult result = aiServiceLanguageExample.getPersonalIdentificationInformation(text,"en");
+//            System.out.println("response" + result);
 
             client.close();
         }
@@ -47,37 +61,37 @@ public class Main {
         }
     }
 
-    private DetectDominantLanguageResult getDominantLanguage(String text) {
-        DetectDominantLanguageDetails languageDetails = DetectDominantLanguageDetails.builder().text(text).build();
-        DetectDominantLanguageRequest request = DetectDominantLanguageRequest.builder().detectDominantLanguageDetails(languageDetails).build();
-        DetectDominantLanguageResponse response = client.detectDominantLanguage(request);
-        return response.getDetectDominantLanguageResult();
-    }
+//    private DetectDominantLanguageResult getDominantLanguage(String text) {
+//        DetectDominantLanguageDetails languageDetails = DetectDominantLanguageDetails.builder().text(text).build();
+//        DetectDominantLanguageRequest request = DetectDominantLanguageRequest.builder().detectDominantLanguageDetails(languageDetails).build();
+//        DetectDominantLanguageResponse response = client.detectDominantLanguage(request);
+//        return response.getDetectDominantLanguageResult();
+//    }
 
-    private void printLanguageType(DetectDominantLanguageResult result) {
-        System.out.println("========= Dominant Language ========");
-        List<DetectedLanguage> languages = result.getLanguages();
-        List<String> languagesStr = languages.stream().map(language -> language.getName()+ " ("+language.getScore()+")").collect(Collectors.toList());
-        System.out.println(String.join(",", languagesStr));
-        System.out.println("========= End ========");
-        System.out.println();
-    }
-
-    private DetectLanguageEntitiesResult getLanguageEntities(String text) {
-        DetectLanguageEntitiesDetails entitiesDetails = DetectLanguageEntitiesDetails.builder().text(text).build();
-        DetectLanguageEntitiesRequest request = DetectLanguageEntitiesRequest.builder().detectLanguageEntitiesDetails(entitiesDetails).build();
-        DetectLanguageEntitiesResponse response = client.detectLanguageEntities(request);
-        return response.getDetectLanguageEntitiesResult();
-    }
-
-    private void printEntities(DetectLanguageEntitiesResult result) {
-        List<Entity> entities = result.getEntities();
-        String printFormat = "%s [%s]";
-        System.out.println("========= Entities ========");
-        entities.forEach(entity -> System.out.println(String.format(printFormat, entity.getText(), entity.getType())));
-        System.out.println("========= End ========");
-        System.out.println();
-    }
+//    private void printLanguageType(DetectDominantLanguageResult result) {
+//        System.out.println("========= Dominant Language ========");
+//        List<DetectedLanguage> languages = result.getLanguages();
+//        List<String> languagesStr = languages.stream().map(language -> language.getName()+ " ("+language.getScore()+")").collect(Collectors.toList());
+//        System.out.println(String.join(",", languagesStr));
+//        System.out.println("========= End ========");
+//        System.out.println();
+//    }
+//
+//    private DetectLanguageEntitiesResult getLanguageEntities(String text) {
+//        DetectLanguageEntitiesDetails entitiesDetails = DetectLanguageEntitiesDetails.builder().text(text).build();
+//        DetectLanguageEntitiesRequest request = DetectLanguageEntitiesRequest.builder().detectLanguageEntitiesDetails(entitiesDetails).build();
+//        DetectLanguageEntitiesResponse response = client.detectLanguageEntities(request);
+//        return response.getDetectLanguageEntitiesResult();
+//    }
+//
+//    private void printEntities(DetectLanguageEntitiesResult result) {
+//        List<Entity> entities = result.getEntities();
+//        String printFormat = "%s [%s]";
+//        System.out.println("========= Entities ========");
+//        entities.forEach(entity -> System.out.println(String.format(printFormat, entity.getText(), entity.getType())));
+//        System.out.println("========= End ========");
+//        System.out.println();
+//    }
 
 //    private BatchDetectLanguageEntitiesResult getLanguageBatchEntities(String text) {
 //        TextDocument entityDocument = TextDocument.builder().key("doc1").text(text).languageCode("en").build();
